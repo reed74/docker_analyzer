@@ -4,7 +4,7 @@ import re
 from typing import List, Dict, Any, Optional, Tuple
 
 from src.core.ports import ImageDataProvider
-from src.core.domain import Package, Binary
+from src.core.domain import Package, Binary, ImageAnalysisError
 
 def _parse_cpe(cpe_string: str) -> Tuple[Optional[str], Optional[str]]:
     """
@@ -33,24 +33,46 @@ class SyftAdapter(ImageDataProvider):
     def _get_syft_json(self, image_name: str) -> Dict[str, Any]:
         """
         Ejecuta syft y devuelve la salida JSON parseada.
-        Devuelve {} si falla, nunca None.
+        Lanza ImageAnalysisError si syft falla.
         """
         print(f"Ejecutando syft para {image_name}... (esto puede tardar un momento)")
         try:
             cmd = ["syft", "scan", f"docker:{image_name}", "-o", "json", "-s", "all-layers"]
+            
             result = subprocess.run(
-                cmd, capture_output=True, text=True, check=True, encoding="utf-8"
+                cmd,
+                capture_output=True,
+                text=True,
+                check=True,  # Esto lanzará CalledProcessError si syft falla
+                encoding="utf-8"
             )
+            
+            if not result.stdout:
+                # Syft se ejecutó pero no devolvió nada
+                raise ImageAnalysisError("Syft se ejecutó pero no devolvió ninguna salida (stdout).")
+
             return json.loads(result.stdout)
+        
         except FileNotFoundError:
+            # Esto es un error de instalación, detenemos todo.
             print("Error: 'syft' no se encuentra. ¿Está instalado y en el PATH?")
             raise
+        
+        # --- ¡LÓGICA ACTUALIZADA! ---
         except subprocess.CalledProcessError as e:
-            print(f"Error al ejecutar syft: {e.stderr}")
-            return {} 
+            # ¡Syft falló! (Probablemente la imagen no existe)
+            print(f"Error al ejecutar syft. ¿Estás seguro de que la imagen '{image_name}' existe localmente?")
+            print(f"Detalle del error de Syft: {e.stderr}")
+            # Lanzamos nuestra excepción personalizada hacia arriba
+            raise ImageAnalysisError(f"Fallo al analizar la imagen: {image_name}") from e
+        # --- FIN DE LA ACTUALIZACIÓN ---
+            
+        except json.JSONDecodeError as e:
+            print(f"Error: Syft devolvió un JSON inválido. Error: {e}")
+            raise ImageAnalysisError(f"Syft devolvió datos corruptos para: {image_name}") from e
         except Exception as e:
             print(f"Un error inesperado ocurrió en _get_syft_json: {e}")
-            return {}
+            raise ImageAnalysisError(f"Error inesperado: {e}") from e
 
     def _run_scan_if_needed(self, image_name: str):
         """

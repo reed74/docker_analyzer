@@ -40,3 +40,7 @@ class VulnerabilityReport:
     os_vulnerabilities: List[Vulnerability]
     # El diccionario agrupado que pediste:
     package_vulnerabilities: Dict[str, Dict[str, List[Vulnerability]]]
+
+class ImageAnalysisError(Exception):
+    """Excepción base para errores durante el análisis de la imagen."""
+    pass
