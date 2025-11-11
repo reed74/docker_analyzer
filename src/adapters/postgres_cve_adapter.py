@@ -2,7 +2,7 @@ import psycopg
 import os
 import re
 from typing import List
-from psycopg.rows import dict_row 
+from psycopg.rows import dict_row # Para que la BD devuelva diccionarios
 
 from src.core.ports import CveRepository
 from src.core.domain import Package, Vulnerability
@@ -30,7 +30,7 @@ class PostgresCveAdapter(CveRepository):
     def _write_debug_sql_file(self, create_query: str, insert_template: str, select_query: str, data: List[tuple]):
         """
         Escribe la secuencia completa de consultas SQL en un fichero de log
-        para la depuración manual.
+        para la depuración manual. (Versión de 2 columnas)
         """
         log_filename = "debug_queries.sql"
         try:
@@ -42,7 +42,7 @@ class PostgresCveAdapter(CveRepository):
                 f.write("\n\n")
                 
                 f.write(f"-- 2. Inserción de {len(data)} paquetes únicos --\n")
-                for product, version in data: # <-- ¡Solo product y version!
+                for product, version in data: # ¡Solo product y version!
                     safe_product = product.replace("'", "''")
                     safe_version = version.replace("'", "''")
                     f.write(f"INSERT INTO input_packages (product, version) VALUES ('{safe_product}', '{safe_version}');\n")
@@ -58,7 +58,8 @@ class PostgresCveAdapter(CveRepository):
 
     def find_package_vulnerabilities(self, packages: List[Package]) -> List[Vulnerability]:
         """
-        Busca vulnerabilidades para la lista de paquetes de software.
+        Busca vulnerabilidades para la lista de paquetes de software,
+        consultando solo por PRODUCTO y VERSIÓN.
         """
         if not packages:
             return []
@@ -67,25 +68,23 @@ class PostgresCveAdapter(CveRepository):
             print("No hay cadena de conexión a la BD, saltando búsqueda de CVEs de paquetes.")
             return []
 
-        # 1. Preparar los datos (solo product y version)
+        # 1. Preparar los datos 
         package_tuples = []
         print("\n--- DEBUG: Preparando datos de paquetes para la BD (muestra de 5):")
         
         for pkg in packages:
-            # Limpia la versión: '1.0.1t-1+deb8u6' -> '1.0.1t'
             cleaned_version = re.split(r'[-+]', pkg.version, maxsplit=1)[0]
             
             if len(package_tuples) < 5: 
-                 # Ahora solo nos importa 'product' y 'version'
                  print(f"  -> Buscando: (p='{pkg.product}', ver='{cleaned_version}')")
             
-            package_tuples.append((pkg.product, cleaned_version)) # <-- ¡Solo product y version!
+            package_tuples.append((pkg.product, cleaned_version))
         
         unique_packages = list(set(package_tuples))
         print(f"--- DEBUG: Total de {len(packages)} paquetes, {len(unique_packages)} únicos para consultar. ---\n")
         
         
-        # --- 2. Consultas SQL actualizadas  ---
+        # 2. Consultas SQL
         create_table_query = """
             CREATE TEMPORARY TABLE input_packages (
                 product TEXT,
@@ -110,8 +109,8 @@ class PostgresCveAdapter(CveRepository):
                 p.product = i.product 
                 AND p.version = i.version;
         """
-     
-        # 3. Escribir el fichero de log 
+
+        # 3. Escribir el fichero de log
         self._write_debug_sql_file(create_table_query, insert_query_template, select_query, unique_packages)
 
         
@@ -148,11 +147,13 @@ class PostgresCveAdapter(CveRepository):
         if not self.db_conn_string or os_name == "unknown":
             return []
         
-        vendor_str = os_name.lower().split()[0] # 'debian'
-        product_str = vendor_str # 'debian'
-        version_str = os_version.split()[0] # '8'
 
-        print(f"\n--- DEBUG: Buscando vulnerabilidades para el SO: (v='{vendor_str}', p='{product_str}', ver='{version_str}') ---")
+        # 1. Limpiamos los nombres del SO
+        product_str = os_name.lower().split()[0] 
+        # "8 (jessie)" -> "8"
+        version_str = os_version.split()[0]
+
+        print(f"\n--- DEBUG: Buscando vulnerabilidades para el SO: (p='{product_str}', ver='{version_str}') ---")
 
         query = """
             SELECT 
@@ -164,8 +165,7 @@ class PostgresCveAdapter(CveRepository):
             JOIN 
                 public.products AS p ON vpm.product_id = p.id
             WHERE 
-                p.vendor = %s
-                AND p.product = %s
+                p.product = %s
                 AND p.version = %s;
         """
 
@@ -173,12 +173,10 @@ class PostgresCveAdapter(CveRepository):
         try:
             with open(log_filename, 'w', encoding='utf-8') as f:
                 print(f"--- DEBUG SQL: Escribiendo log de SO en: {os.path.abspath(log_filename)} ---")
-                safe_vendor = vendor_str.replace("'", "''")
                 safe_product = product_str.replace("'", "''")
                 safe_version = version_str.replace("'", "''")
                 
-                debug_query_sql = query.replace("%s", f"'{safe_vendor}'", 1)
-                debug_query_sql = debug_query_sql.replace("%s", f"'{safe_product}'", 1)
+                debug_query_sql = query.replace("%s", f"'{safe_product}'", 1)
                 debug_query_sql = debug_query_sql.replace("%s", f"'{safe_version}'", 1)
                 f.write(debug_query_sql)
             print("--- DEBUG SQL: Log de SO escrito con éxito. ---")
@@ -190,7 +188,7 @@ class PostgresCveAdapter(CveRepository):
         try:
             with psycopg.connect(self.db_conn_string, row_factory=dict_row) as conn:
                 with conn.cursor() as cursor:
-                    cursor.execute(query, (vendor_str, product_str, version_str))
+                    cursor.execute(query, (product_str, version_str))
                     for row in cursor.fetchall():
                         found_vulns.append(
                             Vulnerability(

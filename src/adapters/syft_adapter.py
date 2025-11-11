@@ -4,7 +4,7 @@ import re
 from typing import List, Dict, Any, Optional, Tuple
 
 from src.core.ports import ImageDataProvider
-from src.core.domain import Package, Binary, ImageAnalysisError
+from src.core.domain import Package, Binary, ImageAnalysisError # Importa el Error
 
 def _parse_cpe(cpe_string: str) -> Tuple[Optional[str], Optional[str]]:
     """
@@ -48,24 +48,18 @@ class SyftAdapter(ImageDataProvider):
             )
             
             if not result.stdout:
-                # Syft se ejecutó pero no devolvió nada
                 raise ImageAnalysisError("Syft se ejecutó pero no devolvió ninguna salida (stdout).")
 
             return json.loads(result.stdout)
         
         except FileNotFoundError:
-            # Esto es un error de instalación, detenemos todo.
             print("Error: 'syft' no se encuentra. ¿Está instalado y en el PATH?")
-            raise
+            raise 
         
-        # --- ¡LÓGICA ACTUALIZADA! ---
         except subprocess.CalledProcessError as e:
-            # ¡Syft falló! (Probablemente la imagen no existe)
             print(f"Error al ejecutar syft. ¿Estás seguro de que la imagen '{image_name}' existe localmente?")
             print(f"Detalle del error de Syft: {e.stderr}")
-            # Lanzamos nuestra excepción personalizada hacia arriba
             raise ImageAnalysisError(f"Fallo al analizar la imagen: {image_name}") from e
-        # --- FIN DE LA ACTUALIZACIÓN ---
             
         except json.JSONDecodeError as e:
             print(f"Error: Syft devolvió un JSON inválido. Error: {e}")
@@ -83,12 +77,11 @@ class SyftAdapter(ImageDataProvider):
             return
 
         print(f"Analizando datos de Syft para {image_name}...")
-        data = self._get_syft_json(image_name)
+        data = self._get_syft_json(image_name) # 'data' ya no puede ser None
         
-        # --- Capturar Distro ---
         os_name = "unknown"
         os_version = "unknown"
-        if data.get("distro"):
+        if data.get("distro"): 
             os_name = data["distro"].get("name", "unknown")
             os_version = data["distro"].get("version", "unknown")
             
@@ -114,6 +107,7 @@ class SyftAdapter(ImageDataProvider):
                 version = artifact.get("version")
                 locations = artifact.get("locations")
                 cpe_list = artifact.get("cpes", []) 
+                purl = artifact.get("purl", "") # Capturamos el PURL
 
                 if not (name and version and locations):
                     continue  
@@ -132,16 +126,17 @@ class SyftAdapter(ImageDataProvider):
                     
                     if not vendor_str:
                         # 2. Si falla (sin CPE), usamos el SO como vendor
-                        vendor_str = os_name.lower().split()[0] # 'debian'
+                        vendor_str = os_name.lower().split()[0] 
                     if not product_str:
                         # 3. El producto es siempre el nombre del paquete
                         product_str = name # 'apt' o 'openssl'
-                    
+
                     packages.append(Package(
                         name=name,
                         version=version,
-                        vendor=vendor_str,   # ej: 'openssl' (del CPE) o 'debian' (del SO)
-                        product=product_str, # ej: 'openssl' (del CPE) o 'apt' (del nombre)
+                        vendor=vendor_str,
+                        product=product_str,
+                        purl=purl,
                         layer_id=layer_id_hash,
                         layer_index=layer_index
                     ))

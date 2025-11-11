@@ -23,23 +23,63 @@ Arquitectura
 
 El proyecto sigue un diseño de Arquitectura Hexagonal para aislar la lógica central de las herramientas externas.
 
+    ¡Absolutamente! Ha sido un placer construir este proyecto contigo. Con todas las nuevas características (DefectDojo, resumen de pipeline, nombre de proyecto), el README.md original ha quedado obsoleto.
+
+Aquí tienes una versión completamente actualizada que refleja todo lo que hemos implementado.
+
+Analizador Hexagonal de Vulnerabilidades Docker
+
+Este proyecto es una herramienta de análisis de seguridad en Python que escanea imágenes Docker para extraer un inventario de activos (SBOM) y compararlo contra una base de datos de vulnerabilidades PostgreSQL personalizada (basada en el modelo NIST/CPE).
+
+Utiliza una Arquitectura Hexagonal (Puertos y Adaptadores) para separar la lógica de negocio principal de las herramientas de infraestructura (como syft y la base de datos PostgreSQL).
+
+📋 Características Principales
+
+    Análisis de Imágenes Docker: Extrae información de cualquier imagen Docker local.
+
+    Generación de SBOM: Utiliza syft para catalogar el sistema operativo, los paquetes del sistema (.deb, .apk, etc.) y los binarios (ej. Go).
+
+    Detección de Vulnerabilidades Personalizada: Compara el inventario de paquetes contra una base de datos PostgreSQL propia para encontrar CVEs.
+
+    Múltiples Formatos de Salida:
+
+        Personalizado: Genera dos ficheros JSON (un inventario de activos y un informe de vulnerabilidades agrupado).
+
+        DefectDojo (CycloneDX): Genera un informe JSON en formato CycloneDX v1.4, listo para ser importado en ASPM como DefectDojo, Snyk, o Dependency-Track.
+
+        Resumen de Pipeline: Genera un JSON de resumen simple con el conteo de vulnerabilidades por severidad, ideal para CI/CD.
+
+    Integración con ASPM: Permite especificar un project_name para la importación automática en DefectDojo.
+
+    Configuración Segura: Gestiona las credenciales de la base de datos de forma segura usando un fichero .env.
+
+Arquitectura
+
+El proyecto sigue un diseño de Arquitectura Hexagonal para aislar la lógica central de las herramientas externas.
+
     Núcleo (Core):
 
-        domain.py: Define los modelos de datos (ej. Package, Vulnerability).
+        domain.py: Define los modelos de datos (ej. Package, VulnerabilityReport).
 
         ports.py: Define las interfaces (ej. ImageDataProvider, CveRepository).
 
-        use_cases.py: Orquesta la lógica principal (ej. ImageAnalyzerService).
+        use_cases.py: Orquesta la lógica principal (ImageAnalyzerService) y devuelve los datos puros.
 
     Adaptadores (Adapters):
 
-        syft_adapter.py: Implementa ImageDataProvider usando la herramienta syft.
+        syft_adapter.py: (Entrada) Implementa ImageDataProvider usando syft.
 
-        postgres_cve_adapter.py: Implementa CveRepository conectándose a una BD PostgreSQL.
+        postgres_cve_adapter.py: (Entrada) Implementa CveRepository consultando PostgreSQL.
 
-        json_repository.py: Implementa AnalysisRepository para guardar los informes en JSON.
+        json_repository.py: (Salida) Implementa AnalysisRepository para guardar informes JSON personalizados.
 
-        main.py: El punto de entrada que "conecta" los adaptadores al núcleo.
+        cyclonedx_adapter.py: (Salida) Adaptador para generar informes en formato CycloneDX.
+
+        summary_adapter.py: (Salida) Adaptador para generar el JSON de resumen.
+
+    Punto de Entrada (main.py):
+
+        El "ensamblador" que lee los argumentos de la línea de comandos, carga el .env, "conecta" los adaptadores al núcleo y decide qué adaptador de salida utilizar.
 
 Empezar
 
@@ -54,15 +94,16 @@ Antes de empezar, asegúrate de tener todo esto instalado en tu sistema:
     Syft: La herramienta de syft debe estar instalada globalmente.
     Bash
 
-curl -sSfL https://raw.githubusercontent.com/anchore/syft/main/install.sh | sudo sh -s -- -b /usr/local/bin
+        curl -sSfL https://raw.githubusercontent.com/anchore/syft/main/install.sh | sudo sh -s -- -b /usr/local/bin
 
-PostgreSQL: Una base de datos PostgreSQL en ejecución y accesible.
+    PostgreSQL: Una base de datos en ejecución y accesible (local o remota).
 
-Librerías de desarrollo de Python y PostgreSQL (necesarias para compilar el conector psycopg):
-Bash
+    Librerías de desarrollo de Python y PostgreSQL (necesarias para compilar el conector psycopg):
+    
+    Bash
 
-    # Para sistemas basados en Debian/Ubuntu
-    sudo apt-get install python3-dev libpq-dev
+        # Para sistemas basados en Debian/Ubuntu
+        sudo apt-get install python3-dev libpq-dev
 
 Instalación del Proyecto
 
@@ -91,7 +132,6 @@ Configura tu Base de Datos:
 Crea tu fichero de entorno: Crea un fichero llamado .env en la raíz del proyecto (docker_analyzer/.env) con tus credenciales.
 
 Plantilla .env:
-Ini, TOML
 
     DB_HOST=localhost
     DB_PORT=5432
@@ -103,44 +143,43 @@ Ini, TOML
 
 Uso
 
-Para ejecutar un análisis, utiliza el script main.py desde la raíz del proyecto. Debes pasarle tres argumentos:
+Uso: python3 -m src.main <imagen> <salida_activos.json> <salida_vulns.json> [OPCIONES]
 
-    El nombre de la imagen Docker (ej. nginx:1.10.3).
+Argumentos Posicionales:
+  image                 Nombre de la imagen Docker (ej. 'nginx:1.10.3')
+  output_asset          Ruta del fichero de salida para los activos (ej. 'activos.json')
+  output_vuln           Ruta del fichero de salida para las vulnerabilidades (ej. 'vulns.json')
 
-    El nombre del fichero de salida para los activos (SBOM).
+Argumentos Opcionales:
+  --formato {custom,defectdojo}
+                        Formato de salida:
+                        'custom': (Default) Genera dos ficheros JSON personalizados.
+                        'defectdojo': Genera un solo fichero CycloneDX en la ruta de 'output_vuln'.
 
-    El nombre del fichero de salida para las vulnerabilidades.
+  --project_name "Nombre"
+                        Nombre del proyecto en DefectDojo (usado con --formato defectdojo).
 
-Ejemplo de Ejecución
+  --summary_file RUTA
+                        Ruta para un JSON de resumen de severidades (ej. 'resumen.json').
 
-Bash
 
-# Asegúrate de que tu venv esté activo
-source venv/bin/activate
+Ejemplo
 
-# Ejecuta el análisis en la imagen Nginx antigua
-python3 -m src.main nobmre_imagen nombre_salida.json vulnerabilidades_nobre_imagen.json
+python3 -m src.main nginx:1.10.3 activos.json vulns_dd.json \
+  --formato defectdojo \
+  --project_name "Mi Proyecto Nginx" \
+  --summary_file resumen.json
 
-Salida en la terminal:
+Contenido de resumen.json:
 
---- DEBUG .ENV: Buscando el fichero .env en la ruta: /.../docker_analyzer/.env
---- DEBUG .ENV: ¡ÉXITO! Fichero .env encontrado y cargado.
-Iniciando análisis de nginx:1.10.3...
-Analizando datos de Syft para nginx:1.10.3...
-Ejecutando syft para nginx:1.10.3... (esto puede tardar un momento)
-Encontrados 140 paquetes.
-Encontrados 0 binarios sin paquete.
-Sistema Operativo detectado: Debian GNU/Linux:8 (jessie)
-
---- DEBUG: Preparando datos de paquetes para la BD (muestra de 5):
-  -> Buscando: (v='debian', p='apt', ver='1.0.9.8.4')
-  -> Buscando: (v='debian', p='base-files', ver='8')
-  ...
---- DEBUG: Total de 140 paquetes, 140 únicos para consultar. ---
-
-Encontradas 115 vulnerabilidades de paquetes en tu BD.
-
---- DEBUG: Buscando vulnerabilidades para el SO: (v='debian', p='debian', ver='8') ---
-Encontradas 0 vulnerabilidades del SO en tu BD.
-Reporte de activos guardado en activos_nginx.json
-Reporte de vulnerabilidades guardado en vulnerabilidades_nginx.json
+{
+    "total_vulnerabilities": 115,
+    "severity_counts": {
+        "critical": 0,
+        "high": 20,
+        "medium": 85,
+        "low": 10,
+        "none": 0,
+        "unknown": 0
+    }
+}

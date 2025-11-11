@@ -7,6 +7,7 @@ class Package:
     version: str
     vendor: str
     product: str
+    purl: str  
     layer_id: str
     layer_index: int
 
@@ -19,8 +20,8 @@ class Binary:
 @dataclass
 class Vulnerability:
     cve_id: str
-    package_name: str
-    package_version: str
+    package_name: str    
+    package_version: str 
     severity: str
 
 @dataclass
@@ -32,14 +33,12 @@ class AssetReport:
     packages: List[Package]
     non_package_binaries: List[Binary]
 
-
 @dataclass
 class VulnerabilityReport:
     """Contiene los hallazgos de vulnerabilidades."""
     image_name: str
     os_vulnerabilities: List[Vulnerability]
-    # El diccionario agrupado que pediste:
-    package_vulnerabilities: Dict[str, Dict[str, List[Vulnerability]]]
+    package_vulnerabilities: List[Vulnerability] # Lista plana
 
 class ImageAnalysisError(Exception):
     """Excepción base para errores durante el análisis de la imagen."""

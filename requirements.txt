@@ -1,2 +1,3 @@
-pip install python-dotenv
-pip install psycopg-binary
+python-dotenv
+psycopg-binary
+cyclonedx-python-lib
