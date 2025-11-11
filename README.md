@@ -23,8 +23,6 @@ Arquitectura
 
 El proyecto sigue un diseño de Arquitectura Hexagonal para aislar la lógica central de las herramientas externas.
 
-    ¡Absolutamente! Ha sido un placer construir este proyecto contigo. Con todas las nuevas características (DefectDojo, resumen de pipeline, nombre de proyecto), el README.md original ha quedado obsoleto.
-
 Aquí tienes una versión completamente actualizada que refleja todo lo que hemos implementado.
 
 Analizador Hexagonal de Vulnerabilidades Docker
