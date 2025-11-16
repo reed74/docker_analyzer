@@ -1,0 +1,223 @@
+{
+    "components": [
+        {
+            "bom-ref": "pkg:apk/alpine/alpine-baselayout@3.7.0-r0?arch=x86_64&distro=alpine-3.22.2",
+            "name": "alpine-baselayout",
+            "purl": "pkg:apk/alpine/alpine-baselayout@3.7.0-r0?arch=x86_64&distro=alpine-3.22.2",
+            "type": "library",
+            "version": "3.7.0-r0"
+        },
+        {
+            "bom-ref": "pkg:apk/alpine/alpine-baselayout-data@3.7.0-r0?arch=x86_64&distro=alpine-3.22.2&upstream=alpine-baselayout",
+            "name": "alpine-baselayout-data",
+            "purl": "pkg:apk/alpine/alpine-baselayout-data@3.7.0-r0?arch=x86_64&distro=alpine-3.22.2&upstream=alpine-baselayout",
+            "type": "library",
+            "version": "3.7.0-r0"
+        },
+        {
+            "bom-ref": "pkg:apk/alpine/alpine-keys@2.5-r0?arch=x86_64&distro=alpine-3.22.2",
+            "name": "alpine-keys",
+            "purl": "pkg:apk/alpine/alpine-keys@2.5-r0?arch=x86_64&distro=alpine-3.22.2",
+            "type": "library",
+            "version": "2.5-r0"
+        },
+        {
+            "bom-ref": "pkg:apk/alpine/alpine-release@3.22.2-r0?arch=x86_64&distro=alpine-3.22.2&upstream=alpine-base",
+            "name": "alpine-release",
+            "purl": "pkg:apk/alpine/alpine-release@3.22.2-r0?arch=x86_64&distro=alpine-3.22.2&upstream=alpine-base",
+            "type": "library",
+            "version": "3.22.2-r0"
+        },
+        {
+            "bom-ref": "pkg:apk/alpine/apk-tools@2.14.9-r3?arch=x86_64&distro=alpine-3.22.2",
+            "name": "apk-tools",
+            "purl": "pkg:apk/alpine/apk-tools@2.14.9-r3?arch=x86_64&distro=alpine-3.22.2",
+            "type": "library",
+            "version": "2.14.9-r3"
+        },
+        {
+            "bom-ref": "pkg:apk/alpine/busybox@1.37.0-r19?arch=x86_64&distro=alpine-3.22.2",
+            "name": "busybox",
+            "purl": "pkg:apk/alpine/busybox@1.37.0-r19?arch=x86_64&distro=alpine-3.22.2",
+            "type": "library",
+            "version": "1.37.0-r19"
+        },
+        {
+            "bom-ref": "pkg:apk/alpine/busybox-binsh@1.37.0-r19?arch=x86_64&distro=alpine-3.22.2&upstream=busybox",
+            "name": "busybox-binsh",
+            "purl": "pkg:apk/alpine/busybox-binsh@1.37.0-r19?arch=x86_64&distro=alpine-3.22.2&upstream=busybox",
+            "type": "library",
+            "version": "1.37.0-r19"
+        },
+        {
+            "bom-ref": "pkg:apk/alpine/ca-certificates-bundle@20250911-r0?arch=x86_64&distro=alpine-3.22.2&upstream=ca-certificates",
+            "name": "ca-certificates-bundle",
+            "purl": "pkg:apk/alpine/ca-certificates-bundle@20250911-r0?arch=x86_64&distro=alpine-3.22.2&upstream=ca-certificates",
+            "type": "library",
+            "version": "20250911-r0"
+        },
+        {
+            "bom-ref": "pkg:apk/alpine/libapk2@2.14.9-r3?arch=x86_64&distro=alpine-3.22.2&upstream=apk-tools",
+            "name": "libapk2",
+            "purl": "pkg:apk/alpine/libapk2@2.14.9-r3?arch=x86_64&distro=alpine-3.22.2&upstream=apk-tools",
+            "type": "library",
+            "version": "2.14.9-r3"
+        },
+        {
+            "bom-ref": "pkg:apk/alpine/libcrypto3@3.5.4-r0?arch=x86_64&distro=alpine-3.22.2&upstream=openssl",
+            "name": "libcrypto3",
+            "purl": "pkg:apk/alpine/libcrypto3@3.5.4-r0?arch=x86_64&distro=alpine-3.22.2&upstream=openssl",
+            "type": "library",
+            "version": "3.5.4-r0"
+        },
+        {
+            "bom-ref": "pkg:apk/alpine/libssl3@3.5.4-r0?arch=x86_64&distro=alpine-3.22.2&upstream=openssl",
+            "name": "libssl3",
+            "purl": "pkg:apk/alpine/libssl3@3.5.4-r0?arch=x86_64&distro=alpine-3.22.2&upstream=openssl",
+            "type": "library",
+            "version": "3.5.4-r0"
+        },
+        {
+            "bom-ref": "pkg:apk/alpine/musl@1.2.5-r10?arch=x86_64&distro=alpine-3.22.2",
+            "name": "musl",
+            "purl": "pkg:apk/alpine/musl@1.2.5-r10?arch=x86_64&distro=alpine-3.22.2",
+            "type": "library",
+            "version": "1.2.5-r10"
+        },
+        {
+            "bom-ref": "pkg:apk/alpine/musl-utils@1.2.5-r10?arch=x86_64&distro=alpine-3.22.2&upstream=musl",
+            "name": "musl-utils",
+            "purl": "pkg:apk/alpine/musl-utils@1.2.5-r10?arch=x86_64&distro=alpine-3.22.2&upstream=musl",
+            "type": "library",
+            "version": "1.2.5-r10"
+        },
+        {
+            "bom-ref": "pkg:apk/alpine/scanelf@1.3.8-r1?arch=x86_64&distro=alpine-3.22.2&upstream=pax-utils",
+            "name": "scanelf",
+            "purl": "pkg:apk/alpine/scanelf@1.3.8-r1?arch=x86_64&distro=alpine-3.22.2&upstream=pax-utils",
+            "type": "library",
+            "version": "1.3.8-r1"
+        },
+        {
+            "bom-ref": "pkg:apk/alpine/ssl_client@1.37.0-r19?arch=x86_64&distro=alpine-3.22.2&upstream=busybox",
+            "name": "ssl_client",
+            "purl": "pkg:apk/alpine/ssl_client@1.37.0-r19?arch=x86_64&distro=alpine-3.22.2&upstream=busybox",
+            "type": "library",
+            "version": "1.37.0-r19"
+        },
+        {
+            "bom-ref": "pkg:apk/alpine/zlib@1.3.1-r2?arch=x86_64&distro=alpine-3.22.2",
+            "name": "zlib",
+            "purl": "pkg:apk/alpine/zlib@1.3.1-r2?arch=x86_64&distro=alpine-3.22.2",
+            "type": "library",
+            "version": "1.3.1-r2"
+        }
+    ],
+    "dependencies": [
+        {
+            "ref": "alpine"
+        },
+        {
+            "ref": "pkg:apk/alpine/alpine-baselayout-data@3.7.0-r0?arch=x86_64&distro=alpine-3.22.2&upstream=alpine-baselayout"
+        },
+        {
+            "ref": "pkg:apk/alpine/alpine-baselayout@3.7.0-r0?arch=x86_64&distro=alpine-3.22.2"
+        },
+        {
+            "ref": "pkg:apk/alpine/alpine-keys@2.5-r0?arch=x86_64&distro=alpine-3.22.2"
+        },
+        {
+            "ref": "pkg:apk/alpine/alpine-release@3.22.2-r0?arch=x86_64&distro=alpine-3.22.2&upstream=alpine-base"
+        },
+        {
+            "ref": "pkg:apk/alpine/apk-tools@2.14.9-r3?arch=x86_64&distro=alpine-3.22.2"
+        },
+        {
+            "ref": "pkg:apk/alpine/busybox-binsh@1.37.0-r19?arch=x86_64&distro=alpine-3.22.2&upstream=busybox"
+        },
+        {
+            "ref": "pkg:apk/alpine/busybox@1.37.0-r19?arch=x86_64&distro=alpine-3.22.2"
+        },
+        {
+            "ref": "pkg:apk/alpine/ca-certificates-bundle@20250911-r0?arch=x86_64&distro=alpine-3.22.2&upstream=ca-certificates"
+        },
+        {
+            "ref": "pkg:apk/alpine/libapk2@2.14.9-r3?arch=x86_64&distro=alpine-3.22.2&upstream=apk-tools"
+        },
+        {
+            "ref": "pkg:apk/alpine/libcrypto3@3.5.4-r0?arch=x86_64&distro=alpine-3.22.2&upstream=openssl"
+        },
+        {
+            "ref": "pkg:apk/alpine/libssl3@3.5.4-r0?arch=x86_64&distro=alpine-3.22.2&upstream=openssl"
+        },
+        {
+            "ref": "pkg:apk/alpine/musl-utils@1.2.5-r10?arch=x86_64&distro=alpine-3.22.2&upstream=musl"
+        },
+        {
+            "ref": "pkg:apk/alpine/musl@1.2.5-r10?arch=x86_64&distro=alpine-3.22.2"
+        },
+        {
+            "ref": "pkg:apk/alpine/scanelf@1.3.8-r1?arch=x86_64&distro=alpine-3.22.2&upstream=pax-utils"
+        },
+        {
+            "ref": "pkg:apk/alpine/ssl_client@1.37.0-r19?arch=x86_64&distro=alpine-3.22.2&upstream=busybox"
+        },
+        {
+            "ref": "pkg:apk/alpine/zlib@1.3.1-r2?arch=x86_64&distro=alpine-3.22.2"
+        }
+    ],
+    "metadata": {
+        "component": {
+            "bom-ref": "alpine",
+            "name": "alpine",
+            "type": "application"
+        },
+        "timestamp": "2025-11-16T09:50:58.882044+00:00",
+        "tools": [
+            {
+                "externalReferences": [
+                    {
+                        "type": "build-system",
+                        "url": "https://github.com/CycloneDX/cyclonedx-python-lib/actions"
+                    },
+                    {
+                        "type": "distribution",
+                        "url": "https://pypi.org/project/cyclonedx-python-lib/"
+                    },
+                    {
+                        "type": "documentation",
+                        "url": "https://cyclonedx-python-library.readthedocs.io/"
+                    },
+                    {
+                        "type": "issue-tracker",
+                        "url": "https://github.com/CycloneDX/cyclonedx-python-lib/issues"
+                    },
+                    {
+                        "type": "license",
+                        "url": "https://github.com/CycloneDX/cyclonedx-python-lib/blob/main/LICENSE"
+                    },
+                    {
+                        "type": "release-notes",
+                        "url": "https://github.com/CycloneDX/cyclonedx-python-lib/blob/main/CHANGELOG.md"
+                    },
+                    {
+                        "type": "vcs",
+                        "url": "https://github.com/CycloneDX/cyclonedx-python-lib"
+                    },
+                    {
+                        "type": "website",
+                        "url": "https://github.com/CycloneDX/cyclonedx-python-lib/#readme"
+                    }
+                ],
+                "name": "cyclonedx-python-lib",
+                "vendor": "CycloneDX",
+                "version": "6.4.4"
+            }
+        ]
+    },
+    "serialNumber": "urn:uuid:efa91058-c298-44cc-8dea-27b13bb0300d",
+    "version": 1,
+    "$schema": "http://cyclonedx.org/schema/bom-1.4.schema.json",
+    "bomFormat": "CycloneDX",
+    "specVersion": "1.4"
+}
