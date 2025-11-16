@@ -31,7 +31,7 @@ Este proyecto es una herramienta de análisis de seguridad en Python que escanea
 
 Utiliza una Arquitectura Hexagonal (Puertos y Adaptadores) para separar la lógica de negocio principal de las herramientas de infraestructura (como syft y la base de datos PostgreSQL).
 
-📋 Características Principales
+Características Principales
 
     Análisis de Imágenes Docker: Extrae información de cualquier imagen Docker local.
 
@@ -181,3 +181,11 @@ Contenido de resumen.json:
         "unknown": 0
     }
 }
+
+ASMP compatibles
+    • OWASP DefectDojo
+    • Snyk
+    • OWASP Dependency-Track
+    • GitLab
+    • GitHub
+
