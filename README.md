@@ -124,7 +124,7 @@ pip install python-dotenv psycopg
 
 Configura tu Base de Datos:
 
-    Carga el esquema de tu BD (el fichero vulnerabilities_251110.sql o el que corresponda por fecha) en tu instancia de PostgreSQL.
+    generarl el esquema de BD y posteriormente lanzar una carga completa de cpe
 
 
 Crea tu fichero de entorno: Crea un fichero llamado .env en la raíz del proyecto (docker_analyzer/.env) con tus credenciales.
@@ -188,4 +188,3 @@ ASMP compatibles
     • OWASP Dependency-Track
     • GitLab
     • GitHub
-
