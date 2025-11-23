@@ -1,3 +1,6 @@
 python-dotenv
 psycopg-binary
 cyclonedx-python-lib
+psycopg2-binary
+requests
+tqdm

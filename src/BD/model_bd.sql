@@ -19,9 +19,7 @@ CREATE SEQUENCE public.vulnerabilities_id_seq
 	MAXVALUE 2147483647
 	START 1
 	CACHE 1
-	NO CYCLE;-- public.binary_hash_cache definition
-
--- public.package_aliases definition
+	NO CYCLE;-- public.package_aliases definition
 
 -- Drop table
 
