@@ -73,3 +73,28 @@ Notas sobre la API de NVD
     Sin API Key: El script espera automáticamnte 6 segundos entre peticiones para evitar el error HTTP 403.
 
     Con API Key: El tiempo de espera se reduce a 0.6 segundos.
+
+
+Además de la carga oficial de NVD, este proyecto incluye un módulo capaz de importar vulnerabilidades desde **OSV.dev (Google Open Source Vulnerabilities)**.
+
+Esto soluciona un problema común: la NVD usa nombres genéricos (ej: `vendor:apache`, `product:log4j`), mientras que los desarrolladores buscan por nombres de paquete reales (ej: Maven `org.apache.logging.log4j:log4j-core`).
+
+Este script descarga las bases de datos de vulnerabilidades de los gestores de paquetes más populares, genera **CPEs sintéticos** y los vincula a los CVEs existentes en tu base de datos.
+
+### Ecosistemas Soportados
+
+El script `OSV.py` soporta la carga automática de los siguientes lenguajes. Se utiliza la columna `target_hw` de la tabla `products` para identificar el origen del paquete:
+
+| Lenguaje / Framework | Gestor de Paquetes | Identificador en BD (`target_hw`) | Ejemplo de Nombre Real |
+| :--- | :--- | :--- | :--- |
+| **Java** | Maven | `maven` | `org.apache.commons:commons-lang3` |
+| **Python** | PyPI | `pypi` | `django` |
+| **JavaScript / TS** | npm | `npm` | `@angular/core` |
+| **Go (Golang)** | Go Modules | `go` | `github.com/gin-gonic/gin` |
+| **.NET** | NuGet | `nuget` | `Microsoft.AspNetCore.Mvc` |
+| **PHP** | Packagist | `packagist` | `laravel/framework` |
+| **Rust** | Crates.io | `crates` | `tokio` |
+
+### Ejecución
+
+Asegúrate de haber realizado primero la carga inicial de NVD (para tener los CVEs base).
